@@ -1,0 +1,5 @@
+{
+  "name": "DRB Logística - Financeiro",
+  "description": "Sistema financeiro da DRB Logística. Módulo de cadastro de usuários e controle de acesso.",
+  "requestFramePermissions": []
+}
