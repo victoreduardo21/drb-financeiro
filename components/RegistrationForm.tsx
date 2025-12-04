@@ -153,12 +153,12 @@ const RegistrationForm: React.FC = () => {
   });
 
   return (
-    // MUDANÇA: Alterado de xl:flex-row para lg:flex-row para suportar notebooks menores
-    <div className="flex flex-col lg:flex-row gap-6 animate-in fade-in duration-500 h-full">
+    // Alteração de lg:flex-row para manter mobile em coluna. lg:h-full para desktop.
+    <div className="flex flex-col lg:flex-row gap-6 animate-in fade-in duration-500 lg:h-full">
       
-      {/* SECTION 1: FORMULÁRIO (Lado Esquerdo no Desktop/Notebook) */}
+      {/* SECTION 1: FORMULÁRIO (Lado Esquerdo no Desktop) */}
       <div className="w-full lg:w-1/3 flex-none">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden sticky top-0">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden lg:sticky lg:top-0">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h2 className="text-lg font-bold text-slate-800">Novo Cadastro</h2>
@@ -182,12 +182,13 @@ const RegistrationForm: React.FC = () => {
                     <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1.5">Nome</label>
                         <div className="relative">
-                            <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                            <User className="absolute left-3 top-3 lg:top-2.5 h-4 w-4 text-slate-400" />
                             <input
                             type="text"
                             name="firstName"
                             required
-                            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
+                            /* MUDANÇA: text-base no mobile (16px) previne zoom no iOS. lg:text-sm volta ao normal no desktop */
+                            className="w-full pl-9 pr-3 py-2.5 lg:py-2 text-base lg:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
                             placeholder="Nome"
                             value={formData.firstName}
                             onChange={handleInputChange}
@@ -201,7 +202,7 @@ const RegistrationForm: React.FC = () => {
                             type="text"
                             name="lastName"
                             required
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
+                            className="w-full px-3 py-2.5 lg:py-2 text-base lg:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
                             placeholder="Sobrenome"
                             value={formData.lastName}
                             onChange={handleInputChange}
@@ -212,12 +213,12 @@ const RegistrationForm: React.FC = () => {
                 <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">Email Corporativo</label>
                 <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Mail className="absolute left-3 top-3 lg:top-2.5 h-4 w-4 text-slate-400" />
                     <input
                     type="email"
                     name="email"
                     required
-                    className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
+                    className="w-full pl-9 pr-3 py-2.5 lg:py-2 text-base lg:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
                     placeholder="usuario@drblogistica.com"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -228,12 +229,12 @@ const RegistrationForm: React.FC = () => {
                 <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">Senha Provisória</label>
                 <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Lock className="absolute left-3 top-3 lg:top-2.5 h-4 w-4 text-slate-400" />
                     <input
                     type="password"
                     name="password"
                     required
-                    className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
+                    className="w-full pl-9 pr-3 py-2.5 lg:py-2 text-base lg:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900"
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -244,10 +245,10 @@ const RegistrationForm: React.FC = () => {
                 <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">Setor</label>
                 <div className="relative">
-                    <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Briefcase className="absolute left-3 top-3 lg:top-2.5 h-4 w-4 text-slate-400" />
                     <select
                     name="sector"
-                    className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white text-slate-900"
+                    className="w-full pl-9 pr-3 py-2.5 lg:py-2 text-base lg:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white text-slate-900"
                     value={formData.sector}
                     onChange={handleInputChange}
                     >
@@ -263,7 +264,7 @@ const RegistrationForm: React.FC = () => {
                 <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/30 focus:ring-4 focus:ring-blue-600/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 lg:py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/30 focus:ring-4 focus:ring-blue-600/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {isSaving ? 'Salvando...' : 'Confirmar Cadastro'}
@@ -273,9 +274,9 @@ const RegistrationForm: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 2: LISTA DE USUÁRIOS (Lado Direito no Desktop/Notebook) */}
+      {/* SECTION 2: LISTA DE USUÁRIOS (Lado Direito no Desktop) */}
       <div className="w-full lg:w-2/3 flex-grow min-w-0">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full flex flex-col">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden lg:h-full flex flex-col min-h-[500px]">
             <div className="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-none">
             <div>
                 <div className="flex items-center gap-2">
@@ -285,20 +286,23 @@ const RegistrationForm: React.FC = () => {
                 </span>
                 </div>
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            
+            {/* Barra de Busca Adaptável */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 <button 
                 onClick={fetchUsers} 
-                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-none"
+                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-none flex items-center justify-center sm:justify-start"
                 title="Atualizar lista"
                 >
                 <RefreshCw className={`h-4 w-4 ${isLoadingList ? 'animate-spin text-blue-600' : ''}`} />
+                <span className="ml-2 sm:hidden text-sm">Atualizar</span>
                 </button>
                 <div className="relative flex-grow sm:flex-grow-0">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input 
                     type="text" 
                     placeholder="Buscar..." 
-                    className="pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-full sm:w-48 bg-white text-slate-900"
+                    className="pl-9 pr-4 py-2.5 lg:py-2 rounded-lg border border-slate-200 text-base lg:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-full sm:w-48 bg-white text-slate-900"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -306,14 +310,15 @@ const RegistrationForm: React.FC = () => {
             </div>
             </div>
 
-            <div className="overflow-x-auto flex-1 custom-scrollbar">
+            <div className="overflow-x-auto flex-1 custom-scrollbar w-full">
             {isLoadingList ? (
                 <div className="flex flex-col items-center justify-center h-full text-slate-400 animate-pulse min-h-[200px]">
                 <Loader2 className="h-8 w-8 animate-spin mb-2" />
                 <p className="text-sm">Carregando...</p>
                 </div>
             ) : (
-                <table className="w-full text-left text-sm text-slate-600">
+                // MUDANÇA: Adicionado min-w-[700px] para forçar scroll horizontal no mobile.
+                <table className="w-full min-w-[700px] text-left text-sm text-slate-600">
                 <thead className="bg-slate-50 text-xs uppercase font-semibold text-slate-500 sticky top-0 z-10">
                     <tr>
                     <th className="px-6 py-3 bg-slate-50">Nome</th>

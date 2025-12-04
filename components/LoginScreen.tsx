@@ -141,13 +141,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Corporativo</label>
                 <div className="relative group">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                  <Mail className="absolute left-3 top-3.5 lg:top-3 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400 shadow-sm"
+                    /* Text-base no mobile previne zoom */
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-base lg:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400 shadow-sm"
                     placeholder="nome@drblogistica.com"
                   />
                 </div>
@@ -156,13 +157,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Senha</label>
                 <div className="relative group">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                  <Lock className="absolute left-3 top-3.5 lg:top-3 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400 shadow-sm"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-base lg:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400 shadow-sm"
                     placeholder="••••••••"
                   />
                 </div>
