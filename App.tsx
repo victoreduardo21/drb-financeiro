@@ -161,27 +161,27 @@ const App: React.FC = () => {
   const headerInfo = getPageTitle();
 
   return (
-    <div className="min-h-full flex flex-col md:flex-row bg-slate-50 font-sans">
-      {/* Mobile Header */}
-      <div className="md:hidden bg-[#0B1120] text-white p-4 flex justify-between items-center z-30 sticky top-0">
-        <div className="flex items-center gap-2 font-bold text-lg tracking-wide">
-          <Truck className="h-5 w-5 text-blue-500" />
-          <span>DRB LOGÍSTICA</span>
-        </div>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-slate-400 hover:text-white">
-          {sidebarOpen ? <X /> : <Menu />}
-        </button>
-      </div>
+    // MUDANÇA: h-screen e overflow-hidden no container principal impede scroll da página inteira
+    <div className="h-screen w-full flex bg-slate-50 font-sans overflow-hidden">
+      
+      {/* Sidebar Mobile Overlay - só aparece quando aberto */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixo no Desktop, Drawer no Mobile */}
       <aside 
         className={`
-          fixed inset-y-0 left-0 z-20 w-72 bg-[#0B1120] text-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col
+          fixed inset-y-0 left-0 z-40 w-72 bg-[#0B1120] text-white transform transition-transform duration-300 ease-in-out 
+          md:relative md:translate-x-0 md:flex md:flex-col
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Brand Area */}
-        <div className="p-8 flex items-center gap-3 font-bold text-2xl tracking-tighter text-white">
+        <div className="p-6 md:p-8 flex items-center gap-3 font-bold text-2xl tracking-tighter text-white">
            <div className="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/50">
              <Truck className="h-6 w-6 text-white" />
            </div>
@@ -195,8 +195,8 @@ const App: React.FC = () => {
           </h3>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 px-4 space-y-2">
+        {/* Navigation Menu - Scrollável se a tela for muito pequena verticalmente */}
+        <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
           {menuItems.map((item) => {
             const isActive = currentScreen === item.id;
             return (
@@ -207,7 +207,7 @@ const App: React.FC = () => {
                     setSidebarOpen(false);
                 }}
                 className={`
-                  w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-200 group
+                  w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200 group
                   ${isActive
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' 
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
@@ -249,16 +249,28 @@ const App: React.FC = () => {
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-screen relative overflow-y-auto bg-[#F8FAFC]">
-        {/* Top Navigation Bar */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 h-20 flex items-center justify-between px-8 sticky top-0 z-10 transition-all">
+      {/* Main Content Area - Wrapper */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        {/* Mobile Header (Só aparece no mobile) */}
+        <div className="md:hidden bg-[#0B1120] text-white p-4 flex justify-between items-center z-30 flex-none">
+            <div className="flex items-center gap-2 font-bold text-lg tracking-wide">
+            <Truck className="h-5 w-5 text-blue-500" />
+            <span>DRB LOGÍSTICA</span>
+            </div>
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-slate-400 hover:text-white">
+            {sidebarOpen ? <X /> : <Menu />}
+            </button>
+        </div>
+
+        {/* Top Navigation Bar - Fixo no topo do main content */}
+        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 h-16 flex-none flex items-center justify-between px-6 z-20 transition-all">
           <div>
-            <h1 className="text-xl font-bold text-slate-800">{headerInfo.title}</h1>
-            <p className="text-xs text-slate-400 mt-0.5">{headerInfo.subtitle}</p>
+            <h1 className="text-lg md:text-xl font-bold text-slate-800">{headerInfo.title}</h1>
+            <p className="hidden md:block text-xs text-slate-400 mt-0.5">{headerInfo.subtitle}</p>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <div className="hidden md:flex items-center text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
                <span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
                Sistema Online
@@ -267,25 +279,20 @@ const App: React.FC = () => {
               <Bell className="h-6 w-6" strokeWidth={1.5} />
               <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200 text-sm cursor-pointer hover:ring-2 hover:ring-offset-2 hover:ring-blue-500 transition-all">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200 text-sm cursor-pointer hover:ring-2 hover:ring-offset-2 hover:ring-blue-500 transition-all">
               {currentUser.firstName[0]}{currentUser.lastName[0]}
             </div>
           </div>
         </header>
 
-        {/* Content Render */}
-        <div className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
-           {renderContent()}
-        </div>
-      </main>
+        {/* Content Render - ÁREA COM SCROLL INTERNO */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F8FAFC]">
+           <div className="max-w-7xl mx-auto w-full h-full">
+             {renderContent()}
+           </div>
+        </main>
+      </div>
       
-      {/* Overlay for mobile sidebar */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-10 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
     </div>
   );
 };
