@@ -10,7 +10,24 @@
       body {
         font-family: 'Inter', sans-serif;
       }
+      /* Custom Scrollbar for consistent look */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 20px;
+      }
     </style>
+    <script>
+      // Polyfill crítico: Evita que o site quebre (Tela Branca) se process.env não estiver definido no navegador
+      window.process = window.process || { env: {} };
+      window.global = window;
+    </script>
   <script type="importmap">
 {
   "imports": {
