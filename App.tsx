@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutGrid, 
@@ -32,11 +33,13 @@ import {
   BadgeDollarSign, // Para Valores Frete
   Calculator,
   Save,
-  Wallet
+  Wallet,
+  BookOpen      // Icone para Documentação
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import RegistrationForm from './components/RegistrationForm';
 import LoginScreen from './components/LoginScreen';
+import DocumentationView from './components/DocumentationView'; // Import da Documentação
 import { Screen, UserRegistrationData } from './types';
 
 // --- COMPONENTES DAS NOVAS TELAS ---
@@ -167,7 +170,7 @@ const DashboardView = () => {
   );
 };
 
-// --- CONFIGURAÇÃO DE VALORES FRETE (NOVA TELA) ---
+// --- CONFIGURAÇÃO DE VALORES FRETE ---
 const RATES = {
   RPA: 2.7,
   VENDA: 5.0
@@ -245,7 +248,7 @@ const FreightValuesView = () => {
   )
 }
 
-// 3. Protocolo (REFORMULADO - LAYOUT PLANILHA)
+// 3. Protocolo
 interface ProtocolData {
   id: string;
   ref: string;
@@ -259,17 +262,14 @@ interface ProtocolData {
 }
 
 const ProtocolView = () => {
-  // State for Inputs Top
   const [plateFilter, setPlateFilter] = useState('');
   const [payee, setPayee] = useState('');
   const [pix, setPix] = useState('');
   const [paymentType, setPaymentType] = useState<'A vista' | 'Prazo' | 'Integral'>('A vista');
-
   const [protocols, setProtocols] = useState<ProtocolData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Mock data: Placas sem hífen e valores base
     const mockData: ProtocolData[] = [
       { id: '1', ref: '20491', opDate: '24/10/2024', plate: 'GQI9J96', service: 'Importação', origin: 'Term. Santos', destination: 'DRB Armazém', container: 'MSKU-9988771', value: 600.00 },
       { id: '2', ref: '20492', opDate: '24/10/2024', plate: 'ABC1234', service: 'Exportação', origin: 'Fábrica SP', destination: 'Porto Itajaí', container: 'HLCU-1122334', value: 850.00 },
@@ -277,28 +277,21 @@ const ProtocolView = () => {
       { id: '4', ref: '20494', opDate: '25/10/2024', plate: 'GQI9J96', service: 'Devolução', origin: 'DRB Armazém', destination: 'Depot MSC', container: 'MSKU-9988771', value: 600.00 },
       { id: '5', ref: '20495', opDate: '26/10/2024', plate: 'KLO8877', service: 'DTA', origin: 'Aeroporto VCP', destination: 'EADI Suzano', container: 'AA-22991', value: 1200.00 },
     ];
-    
     setTimeout(() => {
       setProtocols(mockData);
       setIsLoading(false);
     }, 600);
   }, []);
 
-  // Filter Logic: Puxa viagens da placa selecionada
   const filteredProtocols = protocols.filter(p => 
     plateFilter ? p.plate.toLowerCase().includes(plateFilter.toLowerCase()) : false
   );
 
-  // Financial Calculations: Aplica regras no TOTAL
   const calculateTotals = () => {
     const totalGross = filteredProtocols.reduce((acc, curr) => acc + curr.value, 0);
     const rpaVal = totalGross * (RATES.RPA / 100);
-    
-    // REGRA: Venda (5%) só se for 'A vista'
     const vendaVal = paymentType === 'A vista' ? totalGross * (RATES.VENDA / 100) : 0;
-    
     const totalNet = totalGross - rpaVal - vendaVal;
-
     return { totalGross, rpaVal, vendaVal, totalNet };
   };
 
@@ -324,86 +317,50 @@ const ProtocolView = () => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[calc(100vh-140px)] animate-in fade-in duration-500">
-      
-      {/* --- TOP SECTION (THE SHEET HEADER / RECIBO) --- */}
       <div className="bg-slate-50 border-b border-slate-200 p-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              
-              {/* Left Side: Inputs de Controle */}
               <div className="lg:col-span-7 space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                       <div className="col-span-2 sm:col-span-1">
                           <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Entregue Por / Favorecido</label>
                           <div className="relative">
                             <Users className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <input 
-                                type="text" 
-                                value={payee}
-                                onChange={(e) => setPayee(e.target.value)}
-                                className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none uppercase"
-                                placeholder="Nome do motorista..."
-                            />
+                            <input type="text" value={payee} onChange={(e) => setPayee(e.target.value)} className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none uppercase" placeholder="Nome do motorista..." />
                           </div>
                       </div>
                       <div className="col-span-2 sm:col-span-1">
                           <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Chave PIX</label>
                           <div className="relative">
                             <Wallet className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <input 
-                                type="text" 
-                                value={pix}
-                                onChange={(e) => setPix(e.target.value)}
-                                className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder="CPF/Email/Tel..."
-                            />
+                            <input type="text" value={pix} onChange={(e) => setPix(e.target.value)} className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="CPF/Email/Tel..." />
                           </div>
                       </div>
                   </div>
-
-                  {/* Placa e Pagamento */}
                   <div className="p-4 bg-white rounded-xl border border-blue-100 shadow-sm">
                       <div className="flex flex-col sm:flex-row gap-4 items-end">
                           <div className="flex-1 w-full">
                               <label className="block text-xs font-bold text-blue-700 uppercase mb-1">Cavalo (Placa)</label>
                               <div className="relative">
                                 <Truck className="absolute left-3 top-2.5 h-4 w-4 text-blue-500" />
-                                <input 
-                                    type="text" 
-                                    value={plateFilter}
-                                    onChange={(e) => setPlateFilter(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 rounded-lg border-2 border-blue-200 text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none uppercase placeholder:text-sm placeholder:font-normal placeholder:text-slate-400"
-                                    placeholder="Ex: GQI9J96"
-                                />
+                                <input type="text" value={plateFilter} onChange={(e) => setPlateFilter(e.target.value)} className="w-full pl-9 pr-3 py-2 rounded-lg border-2 border-blue-200 text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none uppercase placeholder:text-sm placeholder:font-normal placeholder:text-slate-400" placeholder="Ex: GQI9J96" />
                               </div>
                           </div>
-                          
                           <div className="flex-1 w-full">
                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Pagamento</label>
-                               <select 
-                                  value={paymentType}
-                                  onChange={(e: any) => setPaymentType(e.target.value)}
-                                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                               >
+                               <select value={paymentType} onChange={(e: any) => setPaymentType(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                                   <option value="A vista">À Vista (RPA + Venda)</option>
                                   <option value="Prazo">A Prazo (Apenas RPA)</option>
                                   <option value="Integral">Integral (Apenas RPA)</option>
                                </select>
                           </div>
-                          
                           <div className="flex-none">
-                              <button 
-                                onClick={handleGenerateReceipt}
-                                disabled={!plateFilter}
-                                className="h-[42px] px-6 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-lg font-bold text-sm shadow-md shadow-green-600/20 transition-all flex items-center gap-2"
-                              >
+                              <button onClick={handleGenerateReceipt} disabled={!plateFilter} className="h-[42px] px-6 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-lg font-bold text-sm shadow-md shadow-green-600/20 transition-all flex items-center gap-2">
                                   <Printer className="h-4 w-4" /> GERAR RECIBO
                               </button>
                           </div>
                       </div>
                   </div>
               </div>
-
-              {/* Right Side: QUADRO DE RECIBO (Cálculo Automático) */}
               <div className="lg:col-span-5">
                   <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-sm h-full flex flex-col">
                       <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
@@ -411,10 +368,7 @@ const ProtocolView = () => {
                           <span className="text-[10px] text-slate-400">{new Date().toLocaleDateString()}</span>
                       </div>
                       <div className="p-4 flex-1 flex flex-col justify-center">
-                          {/* Grid de Valores */}
                           <div className="grid grid-cols-3 gap-0 border border-slate-300 rounded-lg overflow-hidden text-center mb-3">
-                              
-                              {/* Headers */}
                               <div className="bg-slate-200 p-2 border-r border-slate-300 border-b border-slate-300">
                                   <div className="text-[10px] font-bold text-slate-500 uppercase">Total Bruto</div>
                               </div>
@@ -424,8 +378,6 @@ const ProtocolView = () => {
                               <div className="bg-red-50 p-2 border-b border-slate-300">
                                   <div className="text-[10px] font-bold text-red-700 uppercase">(-) RPA {RATES.RPA}%</div>
                               </div>
-                              
-                              {/* Values */}
                               <div className="p-2 border-r border-slate-300 bg-white flex items-center justify-center">
                                   <div className="text-sm font-bold text-slate-800">{totals.totalGross.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
                               </div>
@@ -436,8 +388,6 @@ const ProtocolView = () => {
                                   <div className="text-sm font-medium text-red-600">-{totals.rpaVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
                               </div>
                           </div>
-                          
-                          {/* Linha Condicional de Venda */}
                           {paymentType === 'A vista' && (
                              <div className="flex justify-between items-center px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-xs text-orange-800">
                                 <span className="font-semibold uppercase flex items-center gap-1">
@@ -446,7 +396,6 @@ const ProtocolView = () => {
                                 <span className="font-bold text-sm">-{totals.vendaVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                              </div>
                           )}
-
                           <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-500">
                               <span>Qtd. Minutas: <strong>{filteredProtocols.length}</strong></span>
                               <span>Ref Inicial: <strong>{filteredProtocols.length > 0 ? filteredProtocols[0].ref : '-'}</strong></span>
@@ -454,11 +403,8 @@ const ProtocolView = () => {
                       </div>
                   </div>
               </div>
-
           </div>
       </div>
-  
-      {/* --- BOTTOM SECTION (DATA TABLE LIST) --- */}
       <div className="overflow-auto custom-scrollbar flex-1 bg-white">
         <table className="w-full text-left text-sm text-slate-600 min-w-[1000px]">
           <thead className="bg-slate-100 text-xs uppercase font-bold text-slate-600 sticky top-0 z-10 shadow-sm">
@@ -506,8 +452,6 @@ const ProtocolView = () => {
                     </td>
                 </tr>
             )}
-            
-            {/* Total Row at Bottom of Table */}
             {filteredProtocols.length > 0 && (
                 <tr className="bg-slate-50 font-bold text-slate-800 border-t-2 border-slate-300">
                     <td colSpan={7} className="px-4 py-3 text-right uppercase text-xs">Total Bruto das Minutas:</td>
@@ -523,7 +467,7 @@ const ProtocolView = () => {
   );
 };
 
-// 4. Relatório (ReportsView - Atualizado)
+// 4. Relatório
 const ReportsView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-500">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-64 flex flex-col justify-between hover:shadow-md transition-shadow">
@@ -562,7 +506,6 @@ const ReportsView = () => (
 // 5. Cadastro Favorecido
 const PayeesView = () => (
   <div className="flex flex-col lg:flex-row gap-6 animate-in fade-in duration-500 lg:h-[calc(100vh-140px)]">
-      {/* Formulário */}
       <div className="w-full lg:w-1/3 flex-none">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -609,8 +552,6 @@ const PayeesView = () => (
             </div>
         </div>
       </div>
-
-      {/* Lista */}
       <div className="w-full lg:w-2/3 flex-grow min-w-0">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full flex flex-col">
               <div className="p-4 border-b border-slate-100 flex justify-between items-center">
@@ -661,12 +602,9 @@ const MaturityView = () => (
              <button className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-2">
                 <Calendar className="h-4 w-4" /> Filtro Data
              </button>
-             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                Lançar Conta
-             </button>
+             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Lançar Conta</button>
           </div>
       </div>
-
       <div className="flex-1 overflow-auto custom-scrollbar p-6">
           <div className="mb-6 flex gap-4 overflow-x-auto pb-2">
              <div className="min-w-[200px] p-4 rounded-xl border border-red-100 bg-red-50">
@@ -685,7 +623,6 @@ const MaturityView = () => (
                 <p className="text-xs text-blue-600/80 mt-1">24 títulos</p>
              </div>
           </div>
-
           <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
             <thead className="bg-slate-50 text-xs uppercase font-semibold text-slate-500 rounded-lg">
               <tr>
@@ -757,6 +694,7 @@ const App: React.FC = () => {
     { id: 'reports', name: 'Relatórios', icon: PieChart },
     { id: 'payees', name: 'Cadastro Favorecido', icon: UserPlus },
     { id: 'maturity', name: 'Vencimento', icon: CalendarClock },
+    { id: 'documentation', name: 'Documentação', icon: BookOpen }, // Novo Item
   ];
 
   const renderContent = () => {
@@ -768,6 +706,7 @@ const App: React.FC = () => {
       case 'payees': return <PayeesView />;
       case 'maturity': return <MaturityView />;
       case 'freight_values': return <FreightValuesView />;
+      case 'documentation': return <DocumentationView />; // Nova Tela
       default: return <DashboardView />;
     }
   };
@@ -781,6 +720,7 @@ const App: React.FC = () => {
           case 'payees': return { title: 'Cadastro Favorecido', subtitle: 'Gestão de fornecedores e beneficiários' };
           case 'maturity': return { title: 'Agenda de Vencimentos', subtitle: 'Controle de fluxo de caixa' };
           case 'freight_values': return { title: 'Configuração de Valores', subtitle: 'Taxas de RPA e Venda' };
+          case 'documentation': return { title: 'Documentação', subtitle: 'Manual técnico e funcional' };
           default: return { title: 'DRB Logística', subtitle: 'Sistema Financeiro' };
       }
   }
@@ -789,30 +729,16 @@ const App: React.FC = () => {
 
   return (
     <div className="h-[100dvh] w-full flex bg-slate-50 font-sans overflow-hidden">
-      
-      {/* Sidebar Mobile Overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Sidebar */}
-      <aside 
-        className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-[#020617] text-white transform transition-transform duration-300 ease-in-out 
-          lg:relative lg:translate-x-0 lg:flex lg:flex-col overflow-hidden shadow-2xl lg:shadow-none
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
-      >
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#020617] text-white transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex lg:flex-col overflow-hidden shadow-2xl lg:shadow-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020617] to-[#020617] z-0 pointer-events-none"></div>
         <div className="absolute -top-[100px] -left-[100px] w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[80px] pointer-events-none mix-blend-screen z-0"></div>
 
         <div className="lg:hidden absolute top-4 right-4 z-20">
-            <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-400 hover:text-white">
-                <X className="h-6 w-6" />
-            </button>
+            <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-400 hover:text-white"><X className="h-6 w-6" /></button>
         </div>
 
         <div className="relative z-10 flex flex-col h-full">
@@ -824,9 +750,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="px-6 mt-2 mb-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                Menu Principal
-            </h3>
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Menu Principal</h3>
             </div>
 
             <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
@@ -839,18 +763,9 @@ const App: React.FC = () => {
                         setCurrentScreen(item.id as Screen);
                         setSidebarOpen(false);
                     }}
-                    className={`
-                    w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200 group border
-                    ${isActive
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 border-transparent' 
-                        : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent'
-                    }
-                    `}
+                    className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200 group border ${isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 border-transparent' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent'}`}
                 >
-                    <item.icon 
-                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} 
-                    strokeWidth={1.5}
-                    />
+                    <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} strokeWidth={1.5} />
                     <span className="font-medium text-sm tracking-wide">{item.name}</span>
                 </button>
                 );
@@ -870,10 +785,7 @@ const App: React.FC = () => {
                 </div>
             </div>
             <div className="border-t border-white/10 pt-6 px-4">
-                <button 
-                onClick={handleLogout}
-                className="flex items-center gap-4 text-slate-400 hover:text-red-400 w-full transition-colors group"
-                >
+                <button onClick={handleLogout} className="flex items-center gap-4 text-slate-400 hover:text-red-400 w-full transition-colors group">
                 <LogOut className="h-5 w-5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
                 <span className="font-medium text-sm">Sair do Sistema</span>
                 </button>
@@ -882,7 +794,6 @@ const App: React.FC = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         <div className="lg:hidden bg-[#020617] text-white p-4 flex justify-between items-center z-30 flex-none border-b border-white/10 shadow-md">
             <div className="flex items-center gap-2 font-bold text-lg tracking-wide">
@@ -920,7 +831,6 @@ const App: React.FC = () => {
            </div>
         </main>
       </div>
-      
     </div>
   );
 };
